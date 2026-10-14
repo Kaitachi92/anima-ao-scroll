@@ -10,33 +10,124 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ADoutoraRouteImport } from './routes/a-doutora'
+import { Route as ContatoRouteImport } from './routes/contato'
+import { Route as OConsultorioRouteImport } from './routes/o-consultorio'
+import { Route as PoliticaDePrivacidadeRouteImport } from './routes/politica-de-privacidade'
+import { Route as TratamentosRouteImport } from './routes/tratamentos'
+import { Route as TratamentosIndexRouteImport } from './routes/tratamentos.index'
+import { Route as TratamentosSlugRouteImport } from './routes/tratamentos.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ADoutoraRoute = ADoutoraRouteImport.update({
+  id: '/a-doutora',
+  path: '/a-doutora',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContatoRoute = ContatoRouteImport.update({
+  id: '/contato',
+  path: '/contato',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OConsultorioRoute = OConsultorioRouteImport.update({
+  id: '/o-consultorio',
+  path: '/o-consultorio',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PoliticaDePrivacidadeRoute = PoliticaDePrivacidadeRouteImport.update({
+  id: '/politica-de-privacidade',
+  path: '/politica-de-privacidade',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TratamentosRoute = TratamentosRouteImport.update({
+  id: '/tratamentos',
+  path: '/tratamentos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TratamentosIndexRoute = TratamentosIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => TratamentosRoute,
+} as any)
+const TratamentosSlugRoute = TratamentosSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => TratamentosRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/a-doutora': typeof ADoutoraRoute
+  '/contato': typeof ContatoRoute
+  '/o-consultorio': typeof OConsultorioRoute
+  '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
+  '/tratamentos': typeof TratamentosRouteWithChildren
+  '/tratamentos/$slug': typeof TratamentosSlugRoute
+  '/tratamentos/': typeof TratamentosIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/a-doutora': typeof ADoutoraRoute
+  '/contato': typeof ContatoRoute
+  '/o-consultorio': typeof OConsultorioRoute
+  '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
+  '/tratamentos/$slug': typeof TratamentosSlugRoute
+  '/tratamentos': typeof TratamentosIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/a-doutora': typeof ADoutoraRoute
+  '/contato': typeof ContatoRoute
+  '/o-consultorio': typeof OConsultorioRoute
+  '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
+  '/tratamentos': typeof TratamentosRouteWithChildren
+  '/tratamentos/$slug': typeof TratamentosSlugRoute
+  '/tratamentos/': typeof TratamentosIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/a-doutora'
+    | '/contato'
+    | '/o-consultorio'
+    | '/politica-de-privacidade'
+    | '/tratamentos'
+    | '/tratamentos/$slug'
+    | '/tratamentos/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/a-doutora'
+    | '/contato'
+    | '/o-consultorio'
+    | '/politica-de-privacidade'
+    | '/tratamentos/$slug'
+    | '/tratamentos'
+  id:
+    | '__root__'
+    | '/'
+    | '/a-doutora'
+    | '/contato'
+    | '/o-consultorio'
+    | '/politica-de-privacidade'
+    | '/tratamentos'
+    | '/tratamentos/$slug'
+    | '/tratamentos/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ADoutoraRoute: typeof ADoutoraRoute
+  ContatoRoute: typeof ContatoRoute
+  OConsultorioRoute: typeof OConsultorioRoute
+  PoliticaDePrivacidadeRoute: typeof PoliticaDePrivacidadeRoute
+  TratamentosRoute: typeof TratamentosRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +139,79 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/a-doutora': {
+      id: '/a-doutora'
+      path: '/a-doutora'
+      fullPath: '/a-doutora'
+      preLoaderRoute: typeof ADoutoraRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contato': {
+      id: '/contato'
+      path: '/contato'
+      fullPath: '/contato'
+      preLoaderRoute: typeof ContatoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/o-consultorio': {
+      id: '/o-consultorio'
+      path: '/o-consultorio'
+      fullPath: '/o-consultorio'
+      preLoaderRoute: typeof OConsultorioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/politica-de-privacidade': {
+      id: '/politica-de-privacidade'
+      path: '/politica-de-privacidade'
+      fullPath: '/politica-de-privacidade'
+      preLoaderRoute: typeof PoliticaDePrivacidadeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tratamentos': {
+      id: '/tratamentos'
+      path: '/tratamentos'
+      fullPath: '/tratamentos'
+      preLoaderRoute: typeof TratamentosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tratamentos/': {
+      id: '/tratamentos/'
+      path: '/'
+      fullPath: '/tratamentos/'
+      preLoaderRoute: typeof TratamentosIndexRouteImport
+      parentRoute: typeof TratamentosRoute
+    }
+    '/tratamentos/$slug': {
+      id: '/tratamentos/$slug'
+      path: '/$slug'
+      fullPath: '/tratamentos/$slug'
+      preLoaderRoute: typeof TratamentosSlugRouteImport
+      parentRoute: typeof TratamentosRoute
+    }
   }
 }
 
+interface TratamentosRouteChildren {
+  TratamentosSlugRoute: typeof TratamentosSlugRoute
+  TratamentosIndexRoute: typeof TratamentosIndexRoute
+}
+
+const TratamentosRouteChildren: TratamentosRouteChildren = {
+  TratamentosSlugRoute: TratamentosSlugRoute,
+  TratamentosIndexRoute: TratamentosIndexRoute,
+}
+
+const TratamentosRouteWithChildren = TratamentosRoute._addFileChildren(
+  TratamentosRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ADoutoraRoute: ADoutoraRoute,
+  ContatoRoute: ContatoRoute,
+  OConsultorioRoute: OConsultorioRoute,
+  PoliticaDePrivacidadeRoute: PoliticaDePrivacidadeRoute,
+  TratamentosRoute: TratamentosRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
