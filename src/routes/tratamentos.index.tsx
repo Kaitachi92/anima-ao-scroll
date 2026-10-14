@@ -1,0 +1,6 @@
+import { createFileRoute } from '@tanstack/react-router';
+import { SiteShell } from '@/components/site/site-shell';
+import { PageIntro, TreatmentRow, CtaBand } from '@/components/site/sections';
+import { pageHead, treatments } from '@/lib/site-data';
+export const Route = createFileRoute('/tratamentos/')({head:()=>pageHead('Tratamentos odontológicos em Piracaia','Invisalign, ortodontia, clareamento, implantes e outros cuidados odontológicos em Piracaia. Conheça as opções e agende uma avaliação.'),component:Treatments});
+function Treatments(){return <SiteShell><PageIntro eyebrow="Tratamentos" title="O cuidado certo começa com uma avaliação." description="Conheça os tratamentos apresentados pelo consultório. Cada indicação considera sua saúde bucal, suas necessidades e as particularidades do seu caso."/><section className="site-width pb-20"><div className="treatment-directory">{treatments.map((t,i)=><TreatmentRow key={t.slug} t={t} index={i}/>)}</div><p className="notice">Serviços apresentados no site original. Confirme com o consultório quais estão disponíveis atualmente. As fotografias específicas de cada tratamento aguardam envio e autorização de uso.</p></section><CtaBand/></SiteShell>;}
