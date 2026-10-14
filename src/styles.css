@@ -16,7 +16,7 @@
  --color-surface: var(--surface); --color-ink: var(--ink); --color-destructive: var(--destructive);
  --radius-sm: 2px; --radius-md: 4px; --radius-lg: 8px;
 }
-:root { --background: #FAF8F6; --foreground: #302936; --primary: #6D3A8E; --primary-foreground: #FFFFFF; --secondary: #6D3A8E; --secondary-foreground: #FFFFFF; --deep: #432451; --muted: #EDE3F3; --muted-foreground: #5E5466; --accent: #F7F2FA; --surface: #FFFFFF; --ink: #302936; --border: #E2D8E8; --destructive: oklch(0.55 0.16 30); --photo-backdrop: #EDE3F3; }
+:root { --background: #FAF8F6; --foreground: #302936; --primary: #743293; --primary-foreground: #FFFFFF; --secondary: #743293; --secondary-foreground: #FFFFFF; --deep: #48215C; --muted: #EDE3F3; --muted-foreground: #5E5466; --accent: #F7F2FA; --surface: #FFFFFF; --ink: #302936; --border: #E2D8E8; --destructive: oklch(0.55 0.16 30); --photo-backdrop: #EDE3F3; }
 * { border-color: var(--border); }
 html { scroll-behavior: smooth; }
 body { margin: 0; background: var(--background); color: var(--foreground); font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
@@ -28,7 +28,7 @@ a { text-decoration: none; } button,a { -webkit-tap-highlight-color: transparent
 .site-header { position: sticky; top: 0; z-index: 40; background: var(--background); border-bottom: 1px solid var(--border); }
 .header-inner { height: 105px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
 .brand { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
-.brand-symbol { font-family: var(--font-display); font-size: 40px; font-weight: 500; font-style: italic; border-right: 1px solid var(--border); padding-right: 16px; line-height: 1; }
+.brand-mark { height: 50px; width: auto; border-right: 1px solid var(--border); padding-right: 15px; display: block; }
 .brand-name { font-family: var(--font-display); font-size: 24px; line-height: 1.15; }
 .brand-sub { font-size: 9px; letter-spacing: 1.8px; text-transform: uppercase; margin-top: 5px; display:block; }
 .desktop-nav { display:flex; align-items:center; gap: 29px; }
