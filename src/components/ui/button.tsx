@@ -10,9 +10,9 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: "bg-primary text-primary-foreground hover:bg-secondary",
-        appointment: "bg-primary text-primary-foreground rounded-sm h-12 px-6 font-normal text-xs hover:bg-secondary",
-        editorial: "bg-transparent text-primary rounded-none border-b border-border h-10 px-0 text-xs hover:border-primary",
-        inverse: "bg-background text-primary rounded-sm h-12 px-6 font-normal text-xs hover:bg-muted",
+        appointment: "bg-primary text-primary-foreground rounded-sm h-12 px-6 font-normal text-[13px] hover:bg-secondary",
+        editorial: "bg-transparent text-primary rounded-none border-b border-border h-10 px-0 text-[13px] hover:border-primary",
+        inverse: "bg-background text-primary rounded-sm h-12 px-6 font-normal text-[13px] hover:bg-muted",
         destructive: "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
         outline:
           "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
