@@ -1,24 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
-
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
-export const Route = createFileRoute("/")({
-  component: Index,
-});
-
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
-  return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
-  );
-}
+import { createFileRoute } from '@tanstack/react-router';
+import { SiteShell } from '@/components/site/site-shell';
+import { Hero, AboutSection, TreatmentsSection, Principles, ClinicSection, CtaBand, ContactSection } from '@/components/site/sections';
+import { pageHead, address, email } from '@/lib/site-data';
+export const Route = createFileRoute('/')({ head:()=>({...pageHead('Dentista em Piracaia — cuidado de verdade','Conheça a Dra. Rebeca Galdino e os tratamentos odontológicos em Piracaia — SP. Atendimento individualizado. Agende sua consulta pelo WhatsApp.'),scripts:[{type:'application/ld+json',children:JSON.stringify({'@context':'https://schema.org','@type':'Dentist',name:'Dra. Rebeca Galdino',telephone:'+5511996514034',email,address:{'@type':'PostalAddress',streetAddress:'Av. Jan Antonin Bata, 121',addressLocality:'Piracaia',addressRegion:'SP',postalCode:'12970-000',addressCountry:'BR'}})}]}), component:Home });
+function Home() { return <SiteShell><Hero/><AboutSection/><TreatmentsSection/><Principles/><ClinicSection/><Principles process/><CtaBand/><ContactSection/></SiteShell>; }
