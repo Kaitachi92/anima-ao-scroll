@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { ArrowUpRight, Gem, Menu, MessageCircle, X } from "lucide-react";
+import { ArrowUpRight, Menu, MessageCircle, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
@@ -15,15 +15,21 @@ const navigation = [
 
 export function Brand({ variant = "mark" }: { variant?: "mark" | "full" }) {
   return (
-    <Link to="/" className={`brand brand-${variant}`} aria-label="Dra. Rebeca Galdino — início">
-      <span className="brand-symbol" aria-hidden="true">
-        <Gem size={25} strokeWidth={1.45} />
-      </span>
+    <Link
+      to="/"
+      className={`brand brand-${variant}`}
+      aria-label="Dra. Rebeca Galdino, cirurgiã-dentista — início"
+    >
       <span className="brand-copy">
-        <span className="brand-name">Dra. Rebeca Galdino</span>
-        <span className="brand-sub">
-          Cirurgiã-dentista{variant === "full" ? " · CRO-SP 121.330" : ""}
-        </span>
+        <img
+          className="brand-logo"
+          src="/images/logo-rebeca-galdino.png"
+          alt=""
+          width="1080"
+          height="350"
+          decoding="async"
+        />
+        <span className="brand-sub">Cirurgiã-dentista</span>
       </span>
     </Link>
   );

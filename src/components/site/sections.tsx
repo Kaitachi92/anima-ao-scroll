@@ -17,7 +17,7 @@ import { useRef, useState, type UIEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Appointment } from "./site-shell";
 import { ScrollLogoAnimation } from "./scroll-logo-animation";
-import { address, email, instagram, maps, treatments, whatsapp } from "@/lib/site-data";
+import { address, email, instagram, maps, photos, treatments, whatsapp } from "@/lib/site-data";
 
 export type InstagramPost = {
   id: string;
@@ -74,10 +74,16 @@ export function AboutSection({ full = false }: { full?: boolean }) {
     <section id="cuidado" className="section about-section">
       <div className="site-width editorial-grid">
         <div className="editorial-media">
-          <PhotoPending label="Retrato profissional da Dra. Rebeca" />
-          <p className="image-caption">
-            Fotografia real da profissional aguardando disponibilização.
-          </p>
+          <img
+            className="doctor-portrait"
+            src={photos.portrait}
+            alt="Dra. Rebeca Galdino em seu consultório"
+            width="1200"
+            height="1600"
+            loading="lazy"
+            decoding="async"
+          />
+          <p className="image-caption">Retrato divulgado no site oficial da Dra. Rebeca Galdino.</p>
         </div>
         <div className="editorial-copy">
           <p className="eyebrow">A doutora</p>
@@ -427,7 +433,7 @@ export function PhotoPending({ label }: { label: string }) {
     <div className="photo-placeholder">
       <ImageIcon size={25} strokeWidth={1.35} aria-hidden="true" />
       <p>{label}</p>
-      <small>Fotografia real aguardando envio pelo consultório.</small>
+      <small>Imagem real e autorizada aguardando envio pelo consultório.</small>
     </div>
   );
 }
