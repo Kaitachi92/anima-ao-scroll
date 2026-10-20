@@ -3,17 +3,31 @@ import {
   ArrowDown,
   ArrowUpRight,
   CalendarDays,
+  ChevronLeft,
+  ChevronRight,
   HeartHandshake,
   Image as ImageIcon,
+  Instagram,
   Mail,
   MapPin,
   MessageCircle,
   ShieldCheck,
 } from "lucide-react";
+import { useRef, useState, type UIEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Appointment } from "./site-shell";
 import { ScrollLogoAnimation } from "./scroll-logo-animation";
-import { address, email, maps, treatments, whatsapp } from "@/lib/site-data";
+import { address, email, instagram, maps, treatments, whatsapp } from "@/lib/site-data";
+
+export type InstagramPost = {
+  id: string;
+  permalink: string;
+  mediaUrl: string;
+  mediaType: "IMAGE" | "VIDEO" | "CAROUSEL_ALBUM";
+  thumbnailUrl?: string;
+  caption?: string;
+  timestamp?: string;
+};
 
 export function Hero() {
   return (
@@ -141,6 +155,182 @@ export function TreatmentsSection() {
           A indicação de cada tratamento depende de avaliação odontológica. Consulte a
           disponibilidade atual com o consultório.
         </p>
+      </div>
+    </section>
+  );
+}
+
+export function InstagramSection({ posts = [] }: { posts?: InstagramPost[] }) {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const scrollToPost = (index: number) => {
+    const track = trackRef.current;
+    const slide = track?.querySelectorAll<HTMLElement>("[data-instagram-slide]")[index];
+    if (!track || !slide) return;
+
+    track.scrollLeft = slide.offsetLeft - track.offsetLeft;
+    setActiveIndex(index);
+  };
+
+  const updateActivePost = (event: UIEvent<HTMLDivElement>) => {
+    const track = event.currentTarget;
+    const trackLeft = track.getBoundingClientRect().left;
+    const slides = Array.from(track.querySelectorAll<HTMLElement>("[data-instagram-slide]"));
+    const nearestSlide = slides.reduce(
+      (nearest, slide, index) =>
+        Math.abs(slide.getBoundingClientRect().left - trackLeft) <
+        Math.abs(slides[nearest].getBoundingClientRect().left - trackLeft)
+          ? index
+          : nearest,
+      0,
+    );
+
+    setActiveIndex(nearestSlide);
+  };
+
+  return (
+    <section className="section instagram-section" aria-labelledby="instagram-title">
+      <div className="site-width">
+        <div className="section-heading instagram-heading">
+          <div>
+            <p className="eyebrow">No Instagram</p>
+            <h2 className="section-title" id="instagram-title">
+              Acompanhe de perto o nosso dia a dia.
+            </h2>
+            <p className="section-copy instagram-description">
+              Dicas de saúde bucal, tratamentos, bastidores do consultório e sorrisos que inspiram.
+            </p>
+          </div>
+          <a
+            className="appointment-button instagram-follow"
+            href={instagram}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Seguir no Instagram <ArrowUpRight size={17} aria-hidden="true" />
+          </a>
+        </div>
+
+        {posts.length > 0 ? (
+          <>
+            <div
+              className="instagram-track"
+              ref={trackRef}
+              role="region"
+              aria-label="Publicações do Instagram da Dra. Rebeca Galdino"
+              aria-roledescription="carrossel"
+              onScroll={updateActivePost}
+            >
+              {posts.map((post, index) => {
+                const date = post.timestamp && new Date(post.timestamp);
+                const formattedDate =
+                  date && !Number.isNaN(date.getTime())
+                    ? new Intl.DateTimeFormat("pt-BR", { dateStyle: "medium" }).format(date)
+                    : undefined;
+
+                return (
+                  <article
+                    className="instagram-slide"
+                    data-instagram-slide
+                    key={post.id}
+                    role="group"
+                    aria-roledescription="slide"
+                    aria-label={`${index + 1} de ${posts.length}`}
+                  >
+                    <a
+                      className="instagram-post"
+                      href={post.permalink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`Abrir publicação de ${formattedDate ?? "data não informada"} no Instagram`}
+                    >
+                      <div className="instagram-image-wrap">
+                        <img
+                          className="instagram-image"
+                          src={
+                            post.mediaType === "VIDEO"
+                              ? post.thumbnailUrl || post.mediaUrl
+                              : post.mediaUrl
+                          }
+                          alt={
+                            post.caption ||
+                            "Publicação da Dra. Rebeca Galdino no Instagram"
+                          }
+                          loading={index < 2 ? "eager" : "lazy"}
+                          decoding="async"
+                        />
+                        {post.mediaType === "VIDEO" && (
+                          <span className="instagram-video-badge">Vídeo</span>
+                        )}
+                        <span className="instagram-open-badge" aria-hidden="true">
+                          <Instagram size={20} />
+                        </span>
+                      </div>
+                      <div className="instagram-post-copy">
+                        {formattedDate && (
+                          <time dateTime={post.timestamp}>{formattedDate}</time>
+                        )}
+                        {post.caption && <p>{post.caption}</p>}
+                      </div>
+                    </a>
+                  </article>
+                );
+              })}
+            </div>
+            <div className="instagram-controls">
+              <div className="instagram-pagination" aria-label="Posição no carrossel">
+                {posts.map((post, index) => (
+                  <button
+                    className="instagram-dot"
+                    key={post.id}
+                    type="button"
+                    aria-label={`Ir para publicação ${index + 1}`}
+                    aria-current={activeIndex === index ? "true" : undefined}
+                    onClick={() => scrollToPost(index)}
+                  />
+                ))}
+              </div>
+              <div className="instagram-arrows">
+                <button
+                  className="instagram-arrow"
+                  type="button"
+                  aria-label="Publicação anterior"
+                  disabled={activeIndex === 0}
+                  onClick={() => scrollToPost(activeIndex - 1)}
+                >
+                  <ChevronLeft size={20} aria-hidden="true" />
+                </button>
+                <button
+                  className="instagram-arrow"
+                  type="button"
+                  aria-label="Próxima publicação"
+                  disabled={activeIndex === posts.length - 1}
+                  onClick={() => scrollToPost(activeIndex + 1)}
+                >
+                  <ChevronRight size={20} aria-hidden="true" />
+                </button>
+              </div>
+              <p className="instagram-position" aria-live="polite" aria-atomic="true">
+                {activeIndex + 1} / {posts.length}
+              </p>
+            </div>
+          </>
+        ) : (
+          <div className="instagram-empty" role="status">
+            <span className="instagram-empty-icon">
+              <Instagram size={28} strokeWidth={1.5} aria-hidden="true" />
+            </span>
+            <p className="instagram-empty-title">Publicações reais aguardando conexão</p>
+            <p>
+              As publicações do perfil oficial aparecerão aqui após a configuração da API do
+              Instagram. Enquanto isso, acompanhe a Dra. Rebeca diretamente no perfil.
+            </p>
+            <a href={instagram} target="_blank" rel="noopener noreferrer">
+              Ver perfil oficial <ArrowUpRight size={16} aria-hidden="true" />
+            </a>
+          </div>
+        )}
       </div>
     </section>
   );

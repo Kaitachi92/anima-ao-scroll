@@ -1,10 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 
-const FRAME_COUNT = 192;
-const LAST_REVEAL_FRAME = 42;
-const REVEAL_FRAME_COUNT = LAST_REVEAL_FRAME + 1;
-const FRAME_DIRECTORY = "/frames_Purple_logo_3D_animation_20261014201641_clean_png";
+const FRAME_COUNT = 300;
+const FRAME_DIRECTORY = "/frameia-sequencia";
 const FRAME_CROP = { x: 280, y: 72, width: 720, height: 648 };
+const CHROMA_KEY = { red: 61, green: 137, blue: 66, threshold: 5, feather: 64 };
 
 export function ScrollLogoAnimation() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -25,10 +24,17 @@ export function ScrollLogoAnimation() {
     context.imageSmoothingEnabled = true;
     context.imageSmoothingQuality = "high";
 
+    const processingCanvas = document.createElement("canvas");
+    processingCanvas.width = FRAME_CROP.width;
+    processingCanvas.height = FRAME_CROP.height;
+    const processingContext = processingCanvas.getContext("2d", { willReadFrequently: true });
+    if (!processingContext) {
+      console.error("The scroll logo animation could not initialize its frame processor.");
+      return;
+    }
+
     const images: HTMLImageElement[] = [];
     const failedFrames = new Set<number>();
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    let prefersReducedMotion = reducedMotion.matches;
     let drawRequest = 0;
     let disposed = false;
     let settledFrames = 0;
@@ -38,7 +44,6 @@ export function ScrollLogoAnimation() {
     let lastCanvasHeight = 0;
 
     const getScrollProgress = () => {
-      if (prefersReducedMotion) return 1;
       const trackTop = container.getBoundingClientRect().top + window.scrollY;
       const stickyTop = Number.parseFloat(window.getComputedStyle(sticky).top);
       const scrollDistance = container.offsetHeight - sticky.offsetHeight;
@@ -53,7 +58,7 @@ export function ScrollLogoAnimation() {
       if (disposed) return;
 
       const progress = getScrollProgress();
-      const frame = Math.round(progress * LAST_REVEAL_FRAME);
+      const frame = Math.round(progress * (FRAME_COUNT - 1));
 
       const image = images[frame];
       if (
@@ -105,12 +110,67 @@ export function ScrollLogoAnimation() {
       const height = FRAME_CROP.height * scale;
 
       try {
-        context.drawImage(
+        processingContext.clearRect(0, 0, FRAME_CROP.width, FRAME_CROP.height);
+        processingContext.drawImage(
           image,
           FRAME_CROP.x,
           FRAME_CROP.y,
           FRAME_CROP.width,
           FRAME_CROP.height,
+          0,
+          0,
+          FRAME_CROP.width,
+          FRAME_CROP.height,
+        );
+
+        const framePixels = processingContext.getImageData(
+          0,
+          0,
+          FRAME_CROP.width,
+          FRAME_CROP.height,
+        );
+        const pixels = framePixels.data;
+        const { red: keyRed, green: keyGreen, blue: keyBlue, threshold, feather } = CHROMA_KEY;
+
+        for (let offset = 0; offset < pixels.length; offset += 4) {
+          const red = pixels[offset]!;
+          const green = pixels[offset + 1]!;
+          const blue = pixels[offset + 2]!;
+          const sourceAlpha = pixels[offset + 3]! / 255;
+          const dominance = green - Math.max(red, blue);
+          const progress = Math.min(1, Math.max(0, (dominance - threshold) / feather));
+          const smooth = progress * progress * (3 - 2 * progress);
+          const alpha = sourceAlpha * (1 - smooth);
+
+          if (alpha <= 0.01) {
+            pixels[offset] = 0;
+            pixels[offset + 1] = 0;
+            pixels[offset + 2] = 0;
+            pixels[offset + 3] = 0;
+            continue;
+          }
+
+          if (alpha >= 0.995) continue;
+
+          const background = 1 - alpha;
+          const foregroundRed = Math.min(255, Math.max(0, (red - background * keyRed) / alpha));
+          const foregroundGreen = Math.min(
+            255,
+            Math.max(0, (green - background * keyGreen) / alpha),
+          );
+          const foregroundBlue = Math.min(255, Math.max(0, (blue - background * keyBlue) / alpha));
+
+          pixels[offset] = Math.round(foregroundRed);
+          pixels[offset + 1] = Math.round(
+            Math.min(Math.max(foregroundRed, foregroundBlue), foregroundGreen),
+          );
+          pixels[offset + 2] = Math.round(foregroundBlue);
+          pixels[offset + 3] = Math.round(alpha * 255);
+        }
+
+        processingContext.putImageData(framePixels, 0, 0);
+        context.drawImage(
+          processingCanvas,
           (bounds.width - width) / 2,
           (bounds.height - height) / 2,
           width,
@@ -122,7 +182,7 @@ export function ScrollLogoAnimation() {
       } catch (error) {
         failedFrames.add(frame);
         console.error(`The scroll logo frame could not be drawn: ${image.src}`, error);
-        if (failedFrames.size === REVEAL_FRAME_COUNT && settledFrames === REVEAL_FRAME_COUNT) {
+        if (failedFrames.size === FRAME_COUNT && settledFrames === FRAME_COUNT) {
           setLoadingState("error");
         }
         scheduleDraw();
@@ -135,14 +195,8 @@ export function ScrollLogoAnimation() {
       }
     };
 
-    const handleMotionChange = (event: MediaQueryListEvent) => {
-      prefersReducedMotion = event.matches;
-      scheduleDraw();
-    };
-
     window.addEventListener("scroll", scheduleDraw, { passive: true });
     window.addEventListener("resize", scheduleDraw);
-    reducedMotion.addEventListener("change", handleMotionChange);
 
     const resizeObserver = new ResizeObserver(scheduleDraw);
     resizeObserver.observe(container);
@@ -150,12 +204,12 @@ export function ScrollLogoAnimation() {
 
     const settleFrame = () => {
       settledFrames += 1;
-      if (settledFrames === REVEAL_FRAME_COUNT && usableFrames === 0) {
+      if (settledFrames === FRAME_COUNT && usableFrames === 0) {
         setLoadingState("error");
       }
     };
 
-    for (let index = 0; index < REVEAL_FRAME_COUNT; index += 1) {
+    for (let index = 0; index < FRAME_COUNT; index += 1) {
       const image = new Image();
       images[index] = image;
       image.decoding = "async";
@@ -178,7 +232,7 @@ export function ScrollLogoAnimation() {
         console.error(`The scroll logo frame failed to load: ${image.src}`);
         scheduleDraw();
       };
-      image.src = `${FRAME_DIRECTORY}/frame_${String(index).padStart(6, "0")}.png`;
+      image.src = `${FRAME_DIRECTORY}/frame-${String(index + 1).padStart(4, "0")}.webp`;
     }
 
     scheduleDraw();
@@ -187,7 +241,6 @@ export function ScrollLogoAnimation() {
       disposed = true;
       window.removeEventListener("scroll", scheduleDraw);
       window.removeEventListener("resize", scheduleDraw);
-      reducedMotion.removeEventListener("change", handleMotionChange);
       resizeObserver.disconnect();
       window.cancelAnimationFrame(drawRequest);
 
@@ -214,8 +267,7 @@ export function ScrollLogoAnimation() {
               </span>
             )}
             <div className="hero-logo-caption" aria-hidden="true">
-              <span>Identidade em movimento</span>
-              <span>Role para acompanhar</span>
+              
             </div>
           </div>
         </div>
